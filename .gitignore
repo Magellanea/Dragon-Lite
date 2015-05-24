@@ -48,3 +48,8 @@ env*
 
 # Emacs related files
 *~
+
+*#*
+
+# db files
+*.db
