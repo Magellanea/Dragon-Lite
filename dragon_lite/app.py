@@ -54,7 +54,8 @@ def register_blueprints(app):
 def register_admin_window(app):
     admin = Admin(name='DragonLite Admin')
     admin.init_app(app)
-    admin.add_view(AdminView(UserGroup, db.session))
+    admin.add_view(AdminView
+                   (UserGroup, db.session, columns=('name', 'users')))
     admin.add_view(AdminView(User, db.session, endpoint='all'))
     return None
 

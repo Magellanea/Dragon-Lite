@@ -12,8 +12,10 @@ class UserGroup(CRUDMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), unique=True, nullable=False)
     users = db.relationship('User', secondary=group_user, backref='user_groups')
+    # All arguments must have a default value, otherwise
+    # flask will throw an exception
 
-    def __init__(self, name, **kwargs):
+    def __init__(self, name="", **kwargs):
         db.Model.__init__(self, name=name, **kwargs)
         self.errors = []
 
