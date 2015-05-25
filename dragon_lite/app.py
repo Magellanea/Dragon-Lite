@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 '''The app module, containing the app factory function.'''
 from flask import Flask, render_template
-
+from flask.ext.admin import Admin
 from dragon_lite.settings import ProdConfig
 from dragon_lite.assets import assets
 from dragon_lite.extensions import (
@@ -13,6 +13,9 @@ from dragon_lite.extensions import (
     debug_toolbar,
 )
 from dragon_lite import public, user, user_group
+from dragon_lite.admin.views import AdminView
+from dragon_lite.user_group.models import UserGroup
+from dragon_lite.user.models import User
 
 
 def create_app(config_object=ProdConfig):
@@ -26,6 +29,7 @@ def create_app(config_object=ProdConfig):
     register_extensions(app)
     register_blueprints(app)
     register_errorhandlers(app)
+    register_admin_window(app)
     return app
 
 
@@ -44,6 +48,14 @@ def register_blueprints(app):
     app.register_blueprint(public.views.blueprint)
     app.register_blueprint(user.views.blueprint)
     app.register_blueprint(user_group.views.blueprint)
+    return None
+
+
+def register_admin_window(app):
+    admin = Admin(name='DragonLite Admin')
+    admin.init_app(app)
+    admin.add_view(AdminView(UserGroup, db.session))
+    admin.add_view(AdminView(User, db.session, endpoint='all'))
     return None
 
 
