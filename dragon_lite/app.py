@@ -16,6 +16,8 @@ from dragon_lite import public, user, user_group
 from dragon_lite.admin.views import AdminView
 from dragon_lite.user_group.models import UserGroup
 from dragon_lite.user.models import User
+from dragon_lite.repo.models import Repo
+from dragon_lite.repo.models import Permission
 
 
 def create_app(config_object=ProdConfig):
@@ -57,6 +59,8 @@ def register_admin_window(app):
     admin.add_view(AdminView
                    (UserGroup, db.session, columns=('name', 'users')))
     admin.add_view(AdminView(User, db.session, endpoint='all'))
+    admin.add_view(AdminView(Repo, db.session))
+    admin.add_view(AdminView(Permission, db.session))
     return None
 
 
