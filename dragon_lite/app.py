@@ -18,6 +18,7 @@ from dragon_lite.user_group.models import UserGroup
 from dragon_lite.user.models import User
 from dragon_lite.repo.models import Repo
 from dragon_lite.repo.models import Permission
+from dragon_lite.utils import WhiteList
 
 
 def create_app(config_object=ProdConfig):
@@ -60,10 +61,12 @@ def register_admin_window(app):
                    (UserGroup, db.session, columns=('name', 'users')))
     admin.add_view(AdminView(User, db.session, endpoint='all'))
     admin.add_view(AdminView(Repo, db.session))
-    admin.add_view(AdminView(Permission, db.session))
+    permission_validations = dict(
+        permission=dict(
+            validators=[WhiteList(['RW+'])]))
+    admin.add_view(AdminView(Permission, db.session, validations=permission_validations))
     return None
-
-
+        
 def register_errorhandlers(app):
     def render_error(error):
         # If a HTTPException, pull the `code` attribute; default to 500

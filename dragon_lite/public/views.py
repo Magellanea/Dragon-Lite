@@ -8,7 +8,6 @@ from dragon_lite.extensions import login_manager
 from dragon_lite.user.models import User
 from dragon_lite.public.forms import LoginForm
 from dragon_lite.user.forms import RegisterForm
-from dragon_lite.utils import flash_errors
 from dragon_lite.database import db
 
 blueprint = Blueprint('public', __name__, static_folder="../static")
@@ -49,8 +48,6 @@ def register():
                         active=True)
         flash("Thank you for registering. You can now log in.", 'success')
         return redirect(url_for('public.home'))
-    else:
-        flash_errors(form)
     return render_template('public/register.html', form=form)
 
 @blueprint.route("/about/")

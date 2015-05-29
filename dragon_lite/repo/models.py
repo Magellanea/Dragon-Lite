@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from sqlalchemy.orm import validates
 from dragon_lite.database import db
 from dragon_lite.database import CRUDMixin
 from dragon_lite.user_group import UserGroup
@@ -22,8 +23,14 @@ class Repo(CRUDMixin, db.Model):
 class Permission(CRUDMixin, db.Model):
     __tablename__ = 'permissions'
     id = db.Column(db.Integer, primary_key=True)
-    repo_id = db.Column(db.Integer, db.ForeignKey('repos.id'))
-    user_group_id = db.Column(db.Integer, db.ForeignKey('user_groups.id'))
-    permission = db.Column(db.String(80), unique=True, nullable=False)
+    repo_id = db.Column(db.Integer, db.ForeignKey('repos.id'), nullable=False)
+    user_group_id = db.Column(db.Integer, db.ForeignKey('user_groups.id'), nullable=False)
+    permission = db.Column(db.String(80),  nullable=False)
     repo = db.relationship(Repo)
     user_group = db.relationship(UserGroup)
+
+    @validates('permission')
+    def validate_permission(self, key, val):
+        if val not in ['RW+', 'RW-']:
+            raise ValueError('Permission value not recognized')
+        return val

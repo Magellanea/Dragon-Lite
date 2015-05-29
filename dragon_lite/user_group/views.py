@@ -3,7 +3,6 @@ from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask.ext.login import login_required
 from dragon_lite.user_group.forms import UserGroupForm
 from dragon_lite.user_group.models import UserGroup
-from dragon_lite.utils import flash_label_errors
 
 
 blueprint = Blueprint("user_group", __name__, url_prefix='/user_group',
