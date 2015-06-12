@@ -63,7 +63,7 @@ def register_admin_window(app):
     admin.add_view(AdminView(Repo, db.session))
     permission_validations = dict(
         permission=dict(
-            validators=[WhiteList(['RW+'])]))
+            validators=[WhiteList(['RW+', 'RW', 'W', 'R'])]))
     admin.add_view(AdminView(Permission, db.session, validations=permission_validations))
     return None
         
