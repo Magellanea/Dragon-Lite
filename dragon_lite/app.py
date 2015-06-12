@@ -16,9 +16,11 @@ from dragon_lite import public, user, user_group
 from dragon_lite.admin.views import AdminView
 from dragon_lite.user_group.models import UserGroup
 from dragon_lite.user.models import User
+from dragon_lite.user.models import Key
 from dragon_lite.repo.models import Repo
 from dragon_lite.repo.models import Permission
 from dragon_lite.utils import WhiteList
+from dragon_lite.utils import SSHValidator
 
 
 def create_app(config_object=ProdConfig):
@@ -64,7 +66,11 @@ def register_admin_window(app):
     permission_validations = dict(
         permission=dict(
             validators=[WhiteList(['RW+', 'RW', 'W', 'R'])]))
+    ssh_validations = dict(
+        ssh_key=dict(
+            validators=[SSHValidator()]))
     admin.add_view(AdminView(Permission, db.session, validations=permission_validations))
+    admin.add_view(AdminView(Key, db.session, validations=ssh_validations))
     return None
         
 def register_errorhandlers(app):

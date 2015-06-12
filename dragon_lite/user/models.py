@@ -2,6 +2,9 @@
 import datetime as dt
 
 from flask_login import UserMixin
+from sqlalchemy.orm import validates
+from dragon_lite.database import CRUDMixin
+
 
 from dragon_lite.extensions import bcrypt
 from dragon_lite.database import (
@@ -12,6 +15,7 @@ from dragon_lite.database import (
     relationship,
     SurrogatePK,
 )
+from sshpubkeys import SSHKey, InvalidKeyException
 
 
 class Role(SurrogatePK, Model):
@@ -38,6 +42,8 @@ class User(UserMixin, SurrogatePK, Model):
     last_name = Column(db.String(30), nullable=True)
     active = Column(db.Boolean(), default=False)
     is_admin = Column(db.Boolean(), default=False)
+    keys = db.relationship('Key', backref='users',
+                                lazy='dynamic')
 
     def __init__(self, username="", email="", password=None, **kwargs):
         db.Model.__init__(self, username=username, email=email, **kwargs)
@@ -58,3 +64,18 @@ class User(UserMixin, SurrogatePK, Model):
 
     def __repr__(self):
         return '<User({username!r})>'.format(username=self.username)
+
+
+class Key(CRUDMixin, db.Model):
+    __tablename__ = 'keys'
+    id = db.Column(db.Integer, primary_key=True)
+    ssh_key = db.Column(db.String(410))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
+    @validates('ssh_key')
+    def validate_ssh_key(self, key, val):
+        try:
+            SSHKey(val)
+        except InvalidKeyException:
+            raise ValueError('Invalid SSH Key')
+        return val

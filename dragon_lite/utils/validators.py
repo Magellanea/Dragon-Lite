@@ -1,3 +1,6 @@
+from sshpubkeys import SSHKey, InvalidKeyException
+
+
 class ValidationError(ValueError):
     """
     Raised when a validator fails to validate its input.
@@ -25,4 +28,25 @@ class WhiteList(object):
             message = self.message
             if message is None:
                 message = 'value should be one of:%s' % str(self.vals)
+            raise ValidationError(message)
+
+
+class SSHValidator(object):
+    """
+    Validates that the supplied SSH is a valid one
+    :param vals:
+        The set of vals for which the value should be a part of
+    :param message:
+        Error message to raise in case of a validation error.
+    """
+    def __init__(self, message=None):
+        self.message = message
+
+    def __call__(self, form, field):
+        try:
+            SSHKey(field.data)
+        except InvalidKeyException:
+            message = self.message
+            if message is None:
+                message = 'Invalid SSH Key'
             raise ValidationError(message)
