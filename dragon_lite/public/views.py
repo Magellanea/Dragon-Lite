@@ -28,7 +28,7 @@ def home():
             redirect_url = request.args.get("next") or url_for("user.members")
             return redirect(redirect_url)
         else:
-            flash_errors(form)
+            flash_form_errors(form)
     return render_template("public/home.html", form=form)
 
 @blueprint.route('/logout/')
@@ -54,3 +54,11 @@ def register():
 def about():
     form = LoginForm(request.form)
     return render_template("public/about.html", form=form)
+
+
+def flash_form_errors(form):
+    '''Flash all errors for a form.'''
+    for field, errors in form.errors.items():
+        for error in errors:
+            flash("{0} - {1}"
+                  .format(getattr(form, field).label.text, error), 'warning')
